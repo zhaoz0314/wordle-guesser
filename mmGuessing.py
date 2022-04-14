@@ -1,5 +1,6 @@
 import time
 import math
+import random
 # import numpy as np
 
 # startTime= time.time()
@@ -68,8 +69,8 @@ def minIntendedEntropy(fChoices, fRemaining):
     fOutput= ""
     fEntropy= math.log(len(fRemaining))
     for idx in fChoices:
-        fTempEntropy= averageEntropy(fRemaining, idx) # average
-#        fTempEntropy= maxEntropy(fRemaining, idx) # minmax
+#        fTempEntropy= averageEntropy(fRemaining, idx) # average
+        fTempEntropy= maxEntropy(fRemaining, idx) # minmax
         if fTempEntropy<= fEntropy:
             fOutput= idx
             fEntropy= fTempEntropy
@@ -83,7 +84,6 @@ def minIntendedEntropy(fChoices, fRemaining):
 # print(minIntendedEntropy(wordsFewer,wordsFewer)) # ['raise', 5.117993812416755]
 # print(minIntendedEntropy(words,words)) # ['serai', 6.543911845564792]
 # print(minIntendedEntropy(words,wordsFewer)) # ['serai', 5.117993812416755]
-
 
 # find the new remaining words given the last guess and cue
 def consistentWords(fRemaining,fGuess,fCue):
@@ -102,37 +102,42 @@ def string2Cue(string):
 guessDictionary= words
 answerDictionary= wordsFewer
 
-# make guesses
-# guess= None # coming up with the first guess
-# cue= [None for idx in range(5)]
-# remaining= answerDictionary
-
+# run connected script
+answer= answerDictionary[random.randint(1,len(wordsFewer))-1] # game
+remaining= answerDictionary
 if answerDictionary== wordsFewer and guessDictionary== wordsFewer:
-    guess= "raise"
-    print(['raise', 3.6700406885840637])
 #    guess= "raise"
-#    print(['raise', 5.117993812416755])
+#    print(['raise', 3.6700406885840637])
+    guess= "raise"
+    print(['raise', 5.117993812416755])
 elif answerDictionary== wordsFewer and guessDictionary== words:
-    guess= "soare"
-    print(['soare', 3.665258120124318])
-#    guess= "serai"
-#    print(['serai', 6.543911845564792])
+#    guess= "soare"
+#    print(['soare', 3.665258120124318])
+    guess= "serai"
+    print(['serai', 6.543911845564792])
 elif answerDictionary== words and guessDictionary== words:
-    guess= "tares"
-    print(['tares', 5.173857809125834])
-#    guess= "serai"
-#    print(['serai', 5.117993812416755])
-cue= string2Cue(input("the cue given the guess: "))
-remaining= consistentWords(answerDictionary, guess, cue)
-
-while cue!= [2, 2, 2, 2, 2]:
+#    guess= "tares"
+#    print(['tares', 5.173857809125834])
+    guess= "serai"
+    print(['serai', 5.117993812416755])
+cue= generateCue(answer, guess) # game
+print(str(cue[0])+ str(cue[1])+ str(cue[2])+ str(cue[3])+ str(cue[4]))
+guessNum= 1
+# guess= "99999" # player
+# cue= [0, 0, 0, 0, 0] # game
+# guessNum= 0
+while cue!= [2, 2, 2, 2, 2]: # start guessing
+    remaining= consistentWords(remaining, guess, cue) # player
     if len(remaining)== 1:
         guess= [remaining[0], 0]
     else:
         guess= minIntendedEntropy(guessDictionary,remaining) # using all words possible
-    print(guess)
-    cue= string2Cue(input("the cue given the guess: "))
-    remaining = consistentWords(remaining, guess[0], cue)
+    print(guess[0]+ " | "+ str(guess[1]))
+    guess= guess[0]
+    cue= generateCue(answer, guess) # game
+    print(str(cue[0])+ str(cue[1])+ str(cue[2])+ str(cue[3])+ str(cue[4]))
+    guessNum= guessNum+ 1 # record number of guesses
+print(str(guessNum)+ " guesses were made\n")
 
 # endTime= time.time()
 # print(endTime- startTime)

@@ -55,15 +55,14 @@ def averageEntropy(fRemaining,fGuess):
     
 # find the max resulting entropy of a guess
 def maxEntropy(fRemaining,fGuess):
-    fTotalLen= len(fRemaining)
     fExpEntropies= [0 for idx in range(3**5)]
     for idx in fRemaining:
         fCueIndex= cueIndexing(generateCue(idx, fGuess))
         fExpEntropies[fCueIndex]= fExpEntropies[fCueIndex]+1
     for idx in range(3**5):
         if fExpEntropies[idx]!= 0:
-            fExpEntropies[idx]= fExpEntropies[idx]/fTotalLen*math.log(fExpEntropies[idx]) # fWeightedEntropies pS
-    return(sum(fExpEntropies))
+            fExpEntropies[idx]= math.log(fExpEntropies[idx]) # S
+    return(max(fExpEntropies))
 
 # find the guess that will narrow down the answer the "most" (for ordinary algorithm, find min average S, for minimax algorithm, find min max S)
 def minIntendedEntropy(fChoices, fRemaining):
@@ -77,10 +76,14 @@ def minIntendedEntropy(fChoices, fRemaining):
             fEntropy= fTempEntropy
     return([fOutput, fEntropy])
 
-# test
+# first guess for avg
 # print(minIntendedEntropy(wordsFewer,wordsFewer)) # ['raise', 3.6700406885840637] # 3.901350498199463
 # print(minIntendedEntropy(words,words)) # ['tares', 5.173857809125834] # 120.65073323249817
 # print(minIntendedEntropy(words,wordsFewer)) # ['soare', 3.665258120124318] # 21.697190761566162
+# first guess for minmax
+# print(minIntendedEntropy(wordsFewer,wordsFewer)) # ['raise', 5.117993812416755]
+# print(minIntendedEntropy(words,words)) # ['serai', 6.543911845564792]
+# print(minIntendedEntropy(words,wordsFewer)) # ['serai', 5.117993812416755]
 
 # find the new remaining words given the last guess and cue
 def consistentWords(fRemaining,fGuess,fCue):
@@ -102,15 +105,21 @@ answerDictionary= wordsFewer
 # run connected script
 answer= answerDictionary[random.randint(1,len(wordsFewer))-1] # game
 remaining= answerDictionary
-if answerDictionary== wordsFewer and guessDictionary== wordsFewer: # player
+if answerDictionary== wordsFewer and guessDictionary== wordsFewer:
     guess= "raise"
-    print("raise"+ " | "+ str(3.6700406885840637))
+    print(['raise', 3.6700406885840637])
+#    guess= "raise"
+#    print(['raise', 5.117993812416755])
 elif answerDictionary== wordsFewer and guessDictionary== words:
     guess= "soare"
-    print("soare"+ " | "+ str(3.665258120124318))
+    print(['soare', 3.665258120124318])
+#    guess= "serai"
+#    print(['serai', 6.543911845564792])
 elif answerDictionary== words and guessDictionary== words:
     guess= "tares"
-    print("tares"+ " | "+ str(5.173857809125834))
+    print(['tares', 5.173857809125834])
+#    guess= "serai"
+#    print(['serai', 5.117993812416755])
 cue= generateCue(answer, guess) # game
 print(str(cue[0])+ str(cue[1])+ str(cue[2])+ str(cue[3])+ str(cue[4]))
 guessNum= 1
